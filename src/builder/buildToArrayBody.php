@@ -151,6 +151,7 @@ function buildToArrayBody(Definition $definition, ?Constructor $constructor, Def
                     $code .= "\$this->{$argument->name()}->{$asWhat}(),\n";
                     continue 3;
                 case $deriving instanceof Deriving\ToString:
+                case $deriving instanceof Deriving\FromString:
                 case $deriving instanceof Deriving\Uuid:
                     $code .= "\$this->{$argument->name()}->toString(),\n";
                     continue 3;
@@ -158,6 +159,7 @@ function buildToArrayBody(Definition $definition, ?Constructor $constructor, Def
                     $code .= "\$this->{$argument->name()}->toArray(),\n";
                     continue 3;
                 case $deriving instanceof Deriving\ToScalar:
+                case $deriving instanceof Deriving\FromScalar:
                     $code .= "\$this->{$argument->name()}->toScalar(),\n";
                     continue 3;
             }
