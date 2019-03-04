@@ -155,7 +155,29 @@ CODE;
         foreach ($argumentDefinition->derivings() as $deriving) {
             switch (true) {
                 case $deriving instanceof Deriving\FromArray:
-                    if ($argument->nullable()) {
+                    if ($argument->nullable() && $argument->isList()) {
+                        $code .= <<<CODE
+        if (isset(\$data['{$argument->name()}'])) {
+            if (! \is_array(\$data['{$argument->name()}'])) {
+                throw new \InvalidArgumentException("Value for '{$argument->name()}' is not an array in data array");
+            }
+
+            \${$argument->name()} = [];
+
+            foreach (\$data['{$argument->name()}'] as \$__value) {
+                if (! \is_array(\$data['{$argument->name()}'])) {
+                    throw new \InvalidArgumentException("Key '{$argument->name()}' in data array or is not an array of arrays");
+                }
+
+                \${$argument->name()}[] = $argumentClass::fromArray(\$__value);
+            }
+        } else {
+            \${$argument->name()} = null;
+        }
+
+
+CODE;
+                    } elseif ($argument->nullable()) {
                         $code .= <<<CODE
         if (isset(\$data['{$argument->name()}'])) {
             if (! \is_array(\$data['{$argument->name()}'])) {
